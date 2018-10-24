@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ToDoItem from '../../components/ToDoItem'
 import NewToDoForm from '../../components/NewToDoForm'
 import styled from 'styled-components'
+// import axios from 'axios'
 
 const Container = styled.div`
   background: #2b2e39;
@@ -26,10 +27,25 @@ const DestroyButton = styled.button`
 `
 
 class ToDoList extends Component {
+  componentDidMount () {
+    // axios.get('https://localhost:5001/api/todo').then(response => {
+    //   this.setState({
+    //     tasks: response.data
+    //   })
+    // })
+    fetch('https://localhost:5001/api/todo')
+      .then(response => response.json())
+      .then(json =>
+        this.setState({
+          tasks: json
+        })
+      )
+  }
+
   static defaultProps = {
     tasks: [
-      {text: 'Add new task to list', done: true},
-      {text: 'Remove old task from list'}
+      { id: 0, content: 'Aaaaaaaaa', done: true },
+      { id: 1, content: 'Bbbbbbbbb' }
     ],
     title: 'My list'
   }
@@ -46,7 +62,7 @@ class ToDoList extends Component {
     const { tasks, draft } = this.state
     if (draft === '') return
     const list = tasks
-    list.push({ text: draft, done: false })
+    list.push({ content: draft, done: false })
     this.setState({ tasks: list, draft: '' })
   }
 
@@ -61,7 +77,14 @@ class ToDoList extends Component {
       <Container>
         <Header>{title}</Header>
         <DestroyButton onClick={this.removeAll}>Remove all</DestroyButton>
-        {tasks.map(task => <ToDoItem text={task.text} done={task.done} />)}
+        {tasks.map(task => (
+          <ToDoItem
+            id={task.id}
+            key={task.id}
+            text={task.content}
+            done={task.done}
+          />
+        ))}
         <NewToDoForm
           onSubmit={this.addToDo}
           onChange={this.updateDraft}
