@@ -12,3 +12,22 @@ body {
   color: green;
   text-decoration: line-through;
 }
+
+a.link-edit {
+  background: inherit;
+  border: 0px;
+  font-size: 1.2em;
+  width: 80px;
+  height: 32px;
+  font-size: 1.2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+a.link-edit:hover {
+  background-color: #3d404e;
+  /* 3d404e */
+  border-radius: 15px;
+}
