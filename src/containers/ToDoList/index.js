@@ -20,8 +20,9 @@ const DeleteAllButton = styled.button`
 class ToDoList extends Component {
   static defaultProps = {
     tasks: [
-      { id: 0, content: 'Aaaaaaaaa', done: true },
-      { id: 1, content: 'Bbbbbbbbb' }
+      { id: 0, content: 'If you see this text', done: true },
+      { id: 1, content: 'You don\'t have internet connection' },
+      { id: 2, content: 'Or database is failed' }
     ],
     title: 'My list'
   }
