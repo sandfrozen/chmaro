@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import ToDoList from './containers/ToDoList'
 import ToDoEditForm from './components/ToDoEditForm'
 import NotFound from './components/NotFound'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Login from './components/Login'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import './App.css'
 import styled from 'styled-components'
 
@@ -16,6 +17,24 @@ const Container = styled.div`
   margin-top: 14px;
 `
 
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      sessionStorage.getItem('currentUser') ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/login',
+            state: { from: props.location }
+          }}
+        />
+      )
+    }     
+  />
+)
+
 class App extends Component {
   render () {
     return (
@@ -23,7 +42,8 @@ class App extends Component {
         <Container>
           <Switch>
             <Route exact path='/' component={ToDoList} />
-            <Route exact path='/todo_items/:itemId' component={ToDoEditForm} />
+            <PrivateRoute exact path='/todo_items/:itemId' component={ToDoEditForm} />
+            <Route exact path='/login' component={Login} />
             <Route component={NotFound} />
           </Switch>
         </Container>
