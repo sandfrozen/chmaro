@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import ToDoItem from '../../components/ToDoItem'
 import NewToDoForm from '../../components/NewToDoForm'
 import styled from 'styled-components'
-// import axios from 'axios'
+import toDoApi from '../../api/axiosConfig.js'
+import * as R from 'ramda'
 
 const Container = styled.div`
   background: #2b2e39;
@@ -18,7 +19,7 @@ const Header = styled.h1`
   color: #fff;
 `
 
-const DestroyButton = styled.button`
+const DeleteAllButton = styled.button`
   border-radius: 10px;
   background: red;
   padding: 5px;
@@ -27,21 +28,6 @@ const DestroyButton = styled.button`
 `
 
 class ToDoList extends Component {
-  componentDidMount () {
-    // axios.get('https://localhost:5001/api/todo').then(response => {
-    //   this.setState({
-    //     tasks: response.data
-    //   })
-    // })
-    fetch('https://localhost:5001/api/todo')
-      .then(response => response.json())
-      .then(json =>
-        this.setState({
-          tasks: json
-        })
-      )
-  }
-
   static defaultProps = {
     tasks: [
       { id: 0, content: 'Aaaaaaaaa', done: true },
@@ -54,20 +40,66 @@ class ToDoList extends Component {
     draft: ''
   }
 
+  componentDidMount = () => {
+    this.getAllToDo()
+  }
+
   updateDraft = event => {
     this.setState({ draft: event.target.value })
+  }
+
+  getAllToDo = () => {
+    toDoApi
+      .get()
+      .then(response => response.data)
+      .then(tasks => {
+        this.setState({ tasks })
+      })
+      .catch(error => {
+        console.log('getAllToDo', error)
+      })
   }
 
   addToDo = () => {
     const { tasks, draft } = this.state
     if (draft === '') return
-    const list = tasks
-    list.push({ content: draft, done: false })
-    this.setState({ tasks: list, draft: '' })
+    toDoApi
+      .post('', { content: draft })
+      .then(response => response.data)
+      .then(task => {
+        if (task.id !== null) {
+          tasks.push({ id: task.id, content: draft, done: false })
+          this.setState({ tasks, draft: '' })
+        }
+      })
+      .catch(error => {
+        console.log('addToDo', error)
+      })
   }
 
-  removeAll = () => {
-    this.setState({ tasks: [] })
+  deleteAll = () => {
+    toDoApi
+      .delete('deleteall')
+      .then(response => {
+        this.setState({ tasks: [] })
+      })
+      .catch(error => {
+        console.log('deleteAll', error)
+      })
+  }
+
+  deleteToDo = id => {
+    let { tasks } = this.state
+    toDoApi
+      .delete(`${id}`)
+      .then(response => {
+        const index = R.findIndex(R.propEq('id', id))(tasks)
+        tasks = R.remove(index, 1, tasks)
+        this.setState({ tasks })
+      })
+      .catch(error => {
+        console.log('deleteAll', error)
+      })
   }
 
   render () {
@@ -76,13 +108,14 @@ class ToDoList extends Component {
     return (
       <Container>
         <Header>{title}</Header>
-        <DestroyButton onClick={this.removeAll}>Remove all</DestroyButton>
+        <DeleteAllButton onClick={this.deleteAll}>Delete all</DeleteAllButton>
         {tasks.map(task => (
           <ToDoItem
             id={task.id}
             key={task.id}
             text={task.content}
             done={task.done}
+            deleteToDo={this.deleteToDo}
           />
         ))}
         <NewToDoForm
