@@ -31,9 +31,9 @@ class ToDoEditForm extends Component {
   }
 
   updateToDo = values => {
-    const { id, content, done } = values
+    const { id, content, priority, done } = values
     toDoApi
-      .put(`${id}`, { content, done })
+      .put(`${id}`, { content, priority, done })
       .then(response => {
         this.props.history.push('/')
       })

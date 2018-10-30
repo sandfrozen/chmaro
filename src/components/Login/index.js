@@ -45,7 +45,6 @@ class Login extends Component {
           : <SubmitButton onClick={this.fbLogin}>
               Facebook login
             </SubmitButton>}
-
       </div>
     )
   }

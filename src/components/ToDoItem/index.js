@@ -22,6 +22,16 @@ const Content = styled.div`
   text-decoration: ${props => (props.done ? 'line-through' : 'auto')}
 `
 
+const PriorityLabel = styled.span`
+  margin-right: 9px;
+  font-style: italic;
+  height: 14px;
+  width: 14px;
+  background-color: ${props => props.done ? '#AAAAAA' : props.priority === 'low' ? '#ffdc31' : props.priority === 'high' ? '#ff9532' : '#ff4433' };
+  border-radius: 50%;
+  display: inline-block;
+`
+
 const StyledLink = styled(Link)`
   background: inherit;
   border: 0px;
@@ -82,12 +92,17 @@ class ToDoItem extends Component {
   }
 
   render () {
-    const { text, id } = this.props
+    const { text, priority, id } = this.props
+    const { done } = this.state
     return (
       <Item>
-        <Content done={this.state.done} onClick={this.toggleDone}>
+        <Content done={done} onClick={this.toggleDone}>
+          <PriorityLabel done={done} priority={priority}>
+            
+          </PriorityLabel>
           {text}
         </Content>
+
         <StyledLink to={`/todo_items/${id}`}>
           <span role='img' aria-label='asd'>✏️</span>
         </StyledLink>
