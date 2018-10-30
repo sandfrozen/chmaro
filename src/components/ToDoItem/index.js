@@ -97,9 +97,7 @@ class ToDoItem extends Component {
     return (
       <Item>
         <Content done={done} onClick={this.toggleDone}>
-          <PriorityLabel done={done} priority={priority}>
-            
-          </PriorityLabel>
+          <PriorityLabel done={done} priority={priority} />
           {text}
         </Content>
 
